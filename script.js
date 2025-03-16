@@ -23,7 +23,7 @@ async function login() {
     const data = await response.json();
     if (data.user_id) {
         localStorage.setItem("user_id", data.user_id);
-        window.location.href = "upload.html";
+        window.location.href = "profile.html";
     } else {
         alert(data.error);
     }
