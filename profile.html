@@ -112,7 +112,7 @@
                 phone_number: document.getElementById("phone_number").value
             };
 
-            const response = await fetch(`${API_URL}/update_profile`, {
+            const response = await fetch(`${API_URL}/profile/update`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(profileData)
