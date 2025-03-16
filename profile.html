@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        input, select, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Profile Page</h2>
+    
+    <label>Username (Uneditable)</label>
+    <input type="text" id="username" disabled>
+    
+    <label>Full Name</label>
+    <input type="text" id="fullname" placeholder="Enter full name">
+
+    <label>Country</label>
+    <select id="country">
+        <option value="">Select Country</option>
+        <option value="USA">USA</option>
+        <option value="UK">UK</option>
+        <option value="Canada">Canada</option>
+        <option value="Pakistan">Pakistan</option>
+        <option value="India">India</option>
+        <option value="Germany">Germany</option>
+        <option value="France">France</option>
+        <option value="China">China</option>
+        <option value="Japan">Japan</option>
+        <option value="Australia">Australia</option>
+    </select>
+
+    <label>City</label>
+    <input type="text" id="city" placeholder="Enter city">
+
+    <label>Gender</label>
+    <select id="gender">
+        <option value="">Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <label>Phone Number</label>
+    <input type="text" id="phone_number" placeholder="Enter phone number">
+
+    <button onclick="saveProfile()">Save</button>
+
+    <script>
+        const API_URL = "https://healthy-not-healthy-database.onrender.com";
+
+        async function loadProfile() {
+            const userId = localStorage.getItem("user_id");
+            if (!userId) {
+                alert("Not logged in!");
+                return;
+            }
+
+            const response = await fetch(`${API_URL}/profile?user_id=${userId}`);
+            const user = await response.json();
+
+            document.getElementById("username").value = user.username;
+            document.getElementById("fullname").value = user.fullname || "";
+            document.getElementById("country").value = user.country || "";
+            document.getElementById("city").value = user.city || "";
+            document.getElementById("gender").value = user.gender || "";
+            document.getElementById("phone_number").value = user.phone_number || "";
+        }
+
+        async function saveProfile() {
+            const userId = localStorage.getItem("user_id");
+            if (!userId) {
+                alert("Not logged in!");
+                return;
+            }
+
+            const profileData = {
+                user_id: userId,
+                fullname: document.getElementById("fullname").value,
+                country: document.getElementById("country").value,
+                city: document.getElementById("city").value,
+                gender: document.getElementById("gender").value,
+                phone_number: document.getElementById("phone_number").value
+            };
+
+            const response = await fetch(`${API_URL}/update_profile`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(profileData)
+            });
+
+            const result = await response.json();
+            alert(result.message);
+        }
+
+        loadProfile();
+    </script>
+
+</body>
+</html>
