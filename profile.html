@@ -5,30 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <style>
-        body 
-        {
+        body {
             font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
             text-align: center;
         }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
         input, select, button {
             width: 100%;
-            margin: 10px 0;
-            padding: 8px;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
+
         button {
             background-color: #4CAF50;
             color: white;
-            border: none;
             cursor: pointer;
+            border: none;
+            margin-top: 15px;
         }
+
         button:hover {
             background-color: #45a049;
+        }
+
+        .navbar {
+            background-color: #4CAF50;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
+
     <div class="navbar">
         <a href="upload.html">Upload</a>
         <a href="history.html">History</a>
@@ -36,44 +83,46 @@
         <a href="#" onclick="logout()">Logout</a>
     </div>
 
-    <h2>Profile Page</h2>
-    
-    <label>Username (Uneditable)</label>
-    <input type="text" id="username" disabled>
-    
-    <label>Full Name</label>
-    <input type="text" id="fullname" placeholder="Enter full name">
+    <div class="container">
+        <h1>Profile Page</h1>
+        
+        <label for="username">Username (Uneditable)</label>
+        <input type="text" id="username" disabled>
+        
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" placeholder="Enter full name">
 
-    <label>Country</label>
-    <select id="country">
-        <option value="">Select Country</option>
-        <option value="USA">USA</option>
-        <option value="UK">UK</option>
-        <option value="Canada">Canada</option>
-        <option value="Pakistan">Pakistan</option>
-        <option value="India">India</option>
-        <option value="Germany">Germany</option>
-        <option value="France">France</option>
-        <option value="China">China</option>
-        <option value="Japan">Japan</option>
-        <option value="Australia">Australia</option>
-    </select>
+        <label for="country">Country</label>
+        <select id="country">
+            <option value="">Select Country</option>
+            <option value="USA">USA</option>
+            <option value="UK">UK</option>
+            <option value="Canada">Canada</option>
+            <option value="Pakistan">Pakistan</option>
+            <option value="India">India</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+            <option value="China">China</option>
+            <option value="Japan">Japan</option>
+            <option value="Australia">Australia</option>
+        </select>
 
-    <label>City</label>
-    <input type="text" id="city" placeholder="Enter city">
+        <label for="city">City</label>
+        <input type="text" id="city" placeholder="Enter city">
 
-    <label>Gender</label>
-    <select id="gender">
-        <option value="">Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-    </select>
+        <label for="gender">Gender</label>
+        <select id="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
 
-    <label>Phone Number</label>
-    <input type="text" id="phone_number" placeholder="Enter phone number">
+        <label for="phone_number">Phone Number</label>
+        <input type="text" id="phone_number" placeholder="Enter phone number">
 
-    <button onclick="saveProfile()">Save</button>
+        <button onclick="saveProfile()">Save</button>
+    </div>
 
     <script>
         const API_URL = "https://healthy-not-healthy-database.onrender.com";
