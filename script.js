@@ -23,7 +23,7 @@ async function signup() {
 }
 
 async function login() {
-    const username = document.getElementById("loginemail").value;
+    const email = document.getElementById("loginemail").value;
     const password = document.getElementById("loginPassword").value;
     const response = await fetch(`${API_URL}/login`, {
         method: "POST",
