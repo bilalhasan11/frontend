@@ -1,23 +1,34 @@
 const API_URL = "https://healthy-not-healthy-database.onrender.com";
 
 async function signup() {
-    const username = document.getElementById("signupUsername").value;
+    const fullName = document.getElementById("signupFullName").value;
+    const email = document.getElementById("signupEmail").value;
     const password = document.getElementById("signupPassword").value;
+    const confirmPassword = document.getElementById("signupConfirmPassword").value;
+    if (!fullName || !email || !password || !confirmPassword) {
+        alert("All fields are required!");
+        return;
+    }
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+    }
     const response = await fetch(`${API_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ fullName, email, password })
     });
-    alert(await response.text());
+    const result = await response.text();
+    alert(result);
 }
 
 async function login() {
-    const username = document.getElementById("loginUsername").value;
+    const username = document.getElementById("loginemail").value;
     const password = document.getElementById("loginPassword").value;
     const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
     });
 
     const data = await response.json();
