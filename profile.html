@@ -86,8 +86,8 @@
     <div class="container">
         <h1>Profile Page</h1>
         
-        <label for="username">Username (Uneditable)</label>
-        <input type="text" id="username" disabled>
+        <label for="email">email (Uneditable)</label>
+        <input type="text" id="email" disabled>
         
         <label for="fullname">Full Name</label>
         <input type="text" id="fullname" placeholder="Enter full name">
@@ -137,7 +137,7 @@
             const response = await fetch(`${API_URL}/profile?user_id=${userId}`);
             const user = await response.json();
 
-            document.getElementById("username").value = user.username;
+            document.getElementById("email").value = user.email;
             document.getElementById("fullname").value = user.fullname || "";
             document.getElementById("country").value = user.country || "";
             document.getElementById("city").value = user.city || "";
