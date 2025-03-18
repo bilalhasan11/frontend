@@ -15,7 +15,7 @@
 
         .container {
             width: 90%;
-            max-width: 800px;
+            max-width: 600px;
             margin: 50px auto;
             background: white;
             padding: 20px;
@@ -42,28 +42,29 @@
             font-weight: bold;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        ul {
+            list-style: none;
+            padding: 0;
         }
 
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
-        th, td {
+        li {
+            background: #e2e2e2;
+            margin: 10px 0;
             padding: 10px;
+            border-radius: 5px;
             text-align: center;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
+            font-size: 18px;
         }
 
         .hidden {
             display: none;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -72,70 +73,48 @@
     <div class="navbar">
         <a href="upload.html">Upload</a>
         <a href="history.html">History</a>
+        <a href="hive_management.html">Hive Management</a>
         <a href="profile.html">Profile</a>
-        <a href="hive_management.html">Hives</a>
         <a href="#" onclick="logout()">Logout</a>
     </div>
 
     <div class="container">
         <h1>Hive Management</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Hive Number</th>
-                    <th>Bee Type</th>
-                    <th>Frames</th>
-                    <th>Creation Date</th>
-                    <th>Health Status</th>
-                    <th>Notes</th>
-                </tr>
-            </thead>
-            <tbody id="hiveTable">
-                <!-- Hives will be loaded here -->
-            </tbody>
-        </table>
+        <p class="warning hidden" id="noFarmWarning">You need to register a farm first! <a href="farm.html">Register Farm</a></p>
+        <ul id="hiveList"></ul>
     </div>
 
     <script>
         const API_URL = "https://healthy-not-healthy-database.onrender.com";
-        const userId = localStorage.getItem("user_id");
-
-        if (!userId) {
-            alert("You are not logged in!");
-            window.location.href = "login.html";
-        }
 
         async function loadHives() {
-            const response = await fetch(`${API_URL}/hives?user_id=${userId}`);
-            const data = await response.json();
-
-            if (data.error === "No farm registered") {
-                alert("You need to register a farm first.");
-                window.location.href = "farm.html";
+            const userId = localStorage.getItem("user_id");
+            if (!userId) {
+                alert("Not logged in!");
                 return;
             }
 
-            const hiveTable = document.getElementById("hiveTable");
-            hiveTable.innerHTML = "";
+            // Check if farm exists
+            const farmResponse = await fetch(`${API_URL}/farm?user_id=${userId}`);
+            const farmData = await farmResponse.json();
 
-            data.hives.forEach(hive => {
-                const row = `
-                    <tr>
-                        <td>${hive.hive_number}</td>
-                        <td>${hive.bee_type}</td>
-                        <td>${hive.number_of_frames}</td>
-                        <td>${hive.creation_date}</td>
-                        <td>${hive.health_status}</td>
-                        <td>${hive.notes}</td>
-                    </tr>
-                `;
-                hiveTable.innerHTML += row;
+            if (farmData.error) {
+                document.getElementById("noFarmWarning").classList.remove("hidden");
+                return;
+            }
+
+            // Fetch hives if farm exists
+            const hivesResponse = await fetch(`${API_URL}/hives?farm_id=${farmData.farm_id}`);
+            const hives = await hivesResponse.json();
+
+            const hiveList = document.getElementById("hiveList");
+            hiveList.innerHTML = "";
+
+            hives.forEach(hive => {
+                const li = document.createElement("li");
+                li.textContent = `Hive ${hive.hive_number}`;
+                hiveList.appendChild(li);
             });
-        }
-
-        function logout() {
-            localStorage.removeItem("user_id");
-            window.location.href = "login.html";
         }
 
         loadHives();
