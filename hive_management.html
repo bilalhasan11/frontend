@@ -95,7 +95,7 @@
             }
 
             // Check if farm exists
-            const farmResponse = await fetch(`${API_URL}/farm?user_id=${userId}`);
+            const farmResponse = await fetch(`${API_URL}/farms?user_id=${userId}`);
             const farmData = await farmResponse.json();
 
             if (farmData.error) {
