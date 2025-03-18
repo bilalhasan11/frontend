@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hive Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .navbar {
+            background-color: #4CAF50;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="upload.html">Upload</a>
+        <a href="history.html">History</a>
+        <a href="profile.html">Profile</a>
+        <a href="hive_management.html">Hives</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <div class="container">
+        <h1>Hive Management</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hive Number</th>
+                    <th>Bee Type</th>
+                    <th>Frames</th>
+                    <th>Creation Date</th>
+                    <th>Health Status</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody id="hiveTable">
+                <!-- Hives will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = "https://healthy-not-healthy-database.onrender.com";
+        const userId = localStorage.getItem("user_id");
+
+        if (!userId) {
+            alert("You are not logged in!");
+            window.location.href = "login.html";
+        }
+
+        async function loadHives() {
+            const response = await fetch(`${API_URL}/hives?user_id=${userId}`);
+            const data = await response.json();
+
+            if (data.error === "No farm registered") {
+                alert("You need to register a farm first.");
+                window.location.href = "farm.html";
+                return;
+            }
+
+            const hiveTable = document.getElementById("hiveTable");
+            hiveTable.innerHTML = "";
+
+            data.hives.forEach(hive => {
+                const row = `
+                    <tr>
+                        <td>${hive.hive_number}</td>
+                        <td>${hive.bee_type}</td>
+                        <td>${hive.number_of_frames}</td>
+                        <td>${hive.creation_date}</td>
+                        <td>${hive.health_status}</td>
+                        <td>${hive.notes}</td>
+                    </tr>
+                `;
+                hiveTable.innerHTML += row;
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem("user_id");
+            window.location.href = "login.html";
+        }
+
+        loadHives();
+    </script>
+
+</body>
+</html>
