@@ -121,7 +121,7 @@
 
             try {
                 // Fetch hive details using hive_id
-                const response = await fetch(`${API_URL}/api/hives?hive_id=${hiveId}`);
+                const response = await fetch(`${API_URL}/hive_detail?hive_id=${hiveId}`);
                 const hive = await response.json();
 
                 if (!hive || hive.error) {
