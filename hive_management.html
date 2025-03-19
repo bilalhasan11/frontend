@@ -54,6 +54,11 @@
             border-radius: 5px;
             text-align: center;
             font-size: 18px;
+            cursor: pointer; /* Indicates clickable */
+        }
+
+        li:hover {
+            background: #d0d0d0; /* Hover effect */
         }
 
         .hidden {
@@ -100,13 +105,11 @@
                 const farmResponse = await fetch(`${API_URL}/farm?user_id=${userId}`);
                 const farmData = await farmResponse.json();
 
-                // Check if farm exists or if there's an error
                 if (!farmData || farmData.error) {
                     document.getElementById("noFarmWarning").classList.remove("hidden");
                     return;
                 }
 
-                // Extract farm_id from the farmData JSON
                 const farmId = farmData.farm_id;
                 if (!farmId) {
                     document.getElementById("noFarmWarning").classList.remove("hidden");
@@ -117,20 +120,23 @@
                 const hivesResponse = await fetch(`${API_URL}/hives?farm_id=${farmId}`);
                 const hives = await hivesResponse.json();
 
-                // Check if hives data is valid
                 if (!hives || hives.error) {
                     const hiveList = document.getElementById("hiveList");
                     hiveList.innerHTML = "<li>No hives found for this farm.</li>";
                     return;
                 }
 
-                // Populate the hive list
+                // Populate the hive list with clickable items
                 const hiveList = document.getElementById("hiveList");
-                hiveList.innerHTML = ""; // Clear existing content
+                hiveList.innerHTML = "";
 
                 hives.forEach(hive => {
                     const li = document.createElement("li");
-                    li.textContent = `Hive ${hive.hive_number}`; // Assuming hive_number exists in the hives JSON
+                    li.textContent = `Hive ${hive.hive_number}`; // Display hive_number
+                    li.dataset.hiveId = hive.hive_id; // Store hive_id in data attribute
+                    li.addEventListener("click", () => {
+                        window.location.href = `hive_details.html?hive_id=${hive.hive_id}`;
+                    });
                     hiveList.appendChild(li);
                 });
             } catch (error) {
@@ -139,13 +145,11 @@
             }
         }
 
-        // Call the function to load hives when the page loads
         loadHives();
 
-        // Placeholder logout function (implement as needed)
         function logout() {
             localStorage.removeItem("user_id");
-            window.location.href = "login.html"; // Redirect to login page
+            window.location.href = "login.html";
         }
     </script>
 
