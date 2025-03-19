@@ -54,6 +54,9 @@
             border-radius: 5px;
             text-align: center;
             font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .hidden {
@@ -66,6 +69,23 @@
             text-align: center;
             margin-top: 20px;
         }
+
+        /* Styles for health status circles */
+        .status-circle {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .healthy {
+            background-color: #4CAF50; /* Green */
+        }
+
+        .unhealthy {
+            background-color: #f44336; /* Red */
+        }
     </style>
 </head>
 <body>
@@ -73,9 +93,8 @@
     <div class="navbar">
         <a href="upload.html">Upload</a>
         <a href="history.html">History</a>
+        <a href="hive_management.html">Hive Management</a>
         <a href="profile.html">Profile</a>
-        <a href="farm.html">Farm</a>
-        <a href="hive_management.html">Hive</a>
         <a href="#" onclick="logout()">Logout</a>
     </div>
 
@@ -97,7 +116,7 @@
 
             try {
                 // Fetch farm details using /api/farm
-                const farmResponse = await fetch(`${API_URL}/farm?user_id=${userId}`);
+                const farmResponse = await fetch(`${API_URL}/api/farm?user_id=${userId}`);
                 const farmData = await farmResponse.json();
 
                 // Check if farm exists or if there's an error
@@ -114,7 +133,7 @@
                 }
 
                 // Fetch hives using /api/hives with farm_id
-                const hivesResponse = await fetch(`${API_URL}/hives?farm_id=${farmId}`);
+                const hivesResponse = await fetch(`${API_URL}/api/hives?farm_id=${farmId}`);
                 const hives = await hivesResponse.json();
 
                 // Check if hives data is valid
@@ -124,13 +143,22 @@
                     return;
                 }
 
-                // Populate the hive list
+                // Populate the hive list with health status indicators
                 const hiveList = document.getElementById("hiveList");
                 hiveList.innerHTML = ""; // Clear existing content
 
                 hives.forEach(hive => {
                     const li = document.createElement("li");
-                    li.textContent = `Hive ${hive.hive_number}`; // Assuming hive_number exists in the hives JSON
+
+                    // Create the status circle
+                    const circle = document.createElement("span");
+                    circle.classList.add("status-circle");
+                    circle.classList.add(hive.health_status === "Healthy" ? "healthy" : "unhealthy");
+
+                    // Add circle and hive text to the list item
+                    li.appendChild(circle);
+                    li.appendChild(document.createTextNode(`Hive ${hive.hive_number}`));
+                    
                     hiveList.appendChild(li);
                 });
             } catch (error) {
