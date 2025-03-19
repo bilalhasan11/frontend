@@ -94,30 +94,58 @@
                 return;
             }
 
-            // Check if farm exists
-            const farmResponse = await fetch(`${API_URL}/farms?user_id=${userId}`);
-            const farmData = await farmResponse.json();
+            try {
+                // Fetch farm details using /api/farm
+                const farmResponse = await fetch(`${API_URL}/farm?user_id=${userId}`);
+                const farmData = await farmResponse.json();
 
-            if (farmData.error) {
-                document.getElementById("noFarmWarning").classList.remove("hidden");
-                return;
+                // Check if farm exists or if there's an error
+                if (!farmData || farmData.error) {
+                    document.getElementById("noFarmWarning").classList.remove("hidden");
+                    return;
+                }
+
+                // Extract farm_id from the farmData JSON
+                const farmId = farmData.farm_id;
+                if (!farmId) {
+                    document.getElementById("noFarmWarning").classList.remove("hidden");
+                    return;
+                }
+
+                // Fetch hives using /api/hives with farm_id
+                const hivesResponse = await fetch(`${API_URL}/hives?farm_id=${farmId}`);
+                const hives = await hivesResponse.json();
+
+                // Check if hives data is valid
+                if (!hives || hives.error) {
+                    const hiveList = document.getElementById("hiveList");
+                    hiveList.innerHTML = "<li>No hives found for this farm.</li>";
+                    return;
+                }
+
+                // Populate the hive list
+                const hiveList = document.getElementById("hiveList");
+                hiveList.innerHTML = ""; // Clear existing content
+
+                hives.forEach(hive => {
+                    const li = document.createElement("li");
+                    li.textContent = `Hive ${hive.hive_number}`; // Assuming hive_number exists in the hives JSON
+                    hiveList.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error loading hives:", error);
+                document.getElementById("hiveList").innerHTML = "<li>Error loading hives. Please try again later.</li>";
             }
-
-            // Fetch hives if farm exists
-            const hivesResponse = await fetch(`${API_URL}/hives?farm_id=${farmData.farm_id}`);
-            const hives = await hivesResponse.json();
-
-            const hiveList = document.getElementById("hiveList");
-            hiveList.innerHTML = "";
-
-            hives.forEach(hive => {
-                const li = document.createElement("li");
-                li.textContent = `Hive ${hive.hive_number}`;
-                hiveList.appendChild(li);
-            });
         }
 
+        // Call the function to load hives when the page loads
         loadHives();
+
+        // Placeholder logout function (implement as needed)
+        function logout() {
+            localStorage.removeItem("user_id");
+            window.location.href = "login.html"; // Redirect to login page
+        }
     </script>
 
 </body>
