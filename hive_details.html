@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hive Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .navbar {
+            background-color: #4CAF50;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .details-card {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .details-card p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .details-card strong {
+            color: #333;
+        }
+
+        .health-status {
+            font-weight: bold;
+        }
+
+        .healthy { color: #4CAF50; }
+        .unhealthy { color: #f44336; }
+        .unknown { color: #888; }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="upload.html">Upload</a>
+        <a href="history.html">History</a>
+        <a href="profile.html">Profile</a>
+        <a href="farm.html">Farm</a>
+        <a href="hive_management.html">Hive</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <div class="container">
+        <h1>Hive Details</h1>
+        <div id="hiveDetails" class="details-card"></div>
+        <a href="hive_management.html" class="back-button">Back to Hive List</a>
+        <p id="errorMessage" class="error hidden"></p>
+    </div>
+
+    <script>
+        const API_URL = "https://healthy-not-healthy-database.onrender.com";
+
+        async function loadHiveDetails() {
+            // Get hive_id from URL query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const hiveId = urlParams.get("hive_id");
+
+            if (!hiveId) {
+                displayError("No hive ID provided.");
+                return;
+            }
+
+            try {
+                // Fetch hive details using hive_id
+                const response = await fetch(`${API_URL}/api/hives?hive_id=${hiveId}`);
+                const hive = await response.json();
+
+                if (!hive || hive.error) {
+                    displayError("Hive not found or an error occurred.");
+                    return;
+                }
+
+                // Display hive details
+                const hiveDetails = document.getElementById("hiveDetails");
+                hiveDetails.innerHTML = `
+                    <p><strong>Hive Number:</strong> ${hive.hive_number}</p>
+                    <p><strong>Bee Type:</strong> ${hive.bee_type || "N/A"}</p>
+                    <p><strong>Number of Frames:</strong> ${hive.number_of_frames || "N/A"}</p>
+                    <p><strong>Creation Date:</strong> ${hive.creation_date || "N/A"}</p>
+                    <p><strong>Health Status:</strong> <span class="health-status ${getHealthClass(hive.health_status)}">${hive.health_status || "Unknown"}</span></p>
+                    <p><strong>Notes:</strong> ${hive.notes || "No notes available"}</p>
+                `;
+            } catch (error) {
+                console.error("Error loading hive details:", error);
+                displayError("Error loading hive details. Please try again later.");
+            }
+        }
+
+        // Helper function to determine health status class
+        function getHealthClass(status) {
+            if (!status) return "unknown";
+            return status.toLowerCase() === "healthy" ? "healthy" : status.toLowerCase() === "unhealthy" ? "unhealthy" : "unknown";
+        }
+
+        // Helper function to display error messages
+        function displayError(message) {
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = message;
+            errorMessage.classList.remove("hidden");
+        }
+
+        // Load hive details when the page loads
+        loadHiveDetails();
+
+        function logout() {
+            localStorage.removeItem("user_id");
+            window.location.href = "login.html";
+        }
+    </script>
+
+</body>
+</html>
