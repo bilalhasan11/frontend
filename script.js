@@ -1,4 +1,4 @@
-const API_URL = "https://healthy-not-healthy-database.onrender.com";
+const API_URL = "https://bilalhasanniazi-bee-notbee.hf.space";
 
 async function signup() {
     const fullName = document.getElementById("signupFullName").value;
